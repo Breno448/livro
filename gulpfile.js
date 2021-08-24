@@ -1,34 +1,23 @@
+'use strict';
+
 var gulp = require('gulp');
-var path = require('path');
 var sass = require('gulp-sass');
-var autoprefixer = require('gulp-autoprefixer');
-var sourcemaps = require('gulp-sourcemaps');
-var open = require('gulp-open');
 
-var Paths = {
-  HERE: './',
-  DIST: 'dist/',
-  CSS: './assets/css/',
-  SCSS_TOOLKIT_SOURCES: './assets/scss/material-kit.scss',
-  SCSS: './assets/scss/**/**'
-};
-
-gulp.task('compile-scss', function() {
-  return gulp.src(Paths.SCSS_TOOLKIT_SOURCES)
-    .pipe(sourcemaps.init())
-    .pipe(sass().on('error', sass.logError))
-    .pipe(autoprefixer())
-    .pipe(sourcemaps.write(Paths.HERE))
-    .pipe(gulp.dest(Paths.CSS));
+gulp.task('styles', function() {
+    gulp.src('scss/**/*.scss')
+        .pipe(sass().on('error', sass.logError))
+        .pipe(gulp.dest('./css/'))
 });
 
-gulp.task('watch', function() {
-  gulp.watch(Paths.SCSS, gulp.series('compile-scss'));
+gulp.task('sass', function () {
+    gulp.src('scss/**/*.scss')
+        .pipe(sass({outputStyle: 'expanded'})) // style beautify
+        // .pipe(sass({outputStyle: 'compressed'})) // style minify
+        .on('error', onError)
+        .pipe(gulp.dest('css/main.css'))
 });
 
-gulp.task('open', function() {
-  gulp.src('index.html')
-    .pipe(open());
+//Watch task
+gulp.task('default',function() {
+    gulp.watch('scss/**/*.scss',['styles']);
 });
-
-gulp.task('open-app', gulp.parallel('open', 'watch'));
